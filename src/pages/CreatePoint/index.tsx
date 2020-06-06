@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
 import api from '../../services/api';
+import {LeafletMouseEvent} from 'leaflet';
 
 import './styles.css';
 import logo from '../../assets/logo.svg';
@@ -29,9 +30,20 @@ const CreatePoint = () => {
     const [items, setItems] = useState<Item[]>([]);
     const [uf, setUf] = useState<string[]>([]);
     const [cities, setCities] = useState<string[]>([]);
+    const [selectedPosition, setSelecetedPosition] = useState<[number, number]>([0,0]);
+    const [initialPosition, setInitialPosition] = useState<[number, number]>([0,0])
 
     const [selectedUf, setSelectedUf] = useState('0');
     const [selectedCity, setSelectedCity] = useState('0');
+  
+
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition(position => {
+           const {latitude, longitude} = position.coords;
+
+           setInitialPosition([latitude, longitude ]);
+        });
+    });
 
 
     useEffect(() => {
@@ -72,6 +84,10 @@ const CreatePoint = () => {
     function hundleSelectedCity(event: ChangeEvent<HTMLSelectElement>) {
         const city = event.target.value;
         setSelectedCity(city);
+    }
+
+    function hundleMapClick(event: LeafletMouseEvent){
+        setSelecetedPosition([event.latlng.lat, event.latlng.lng]);
     }
 
     return (
@@ -117,13 +133,13 @@ const CreatePoint = () => {
                         <span>Selecione o endereço no mapa</span>
                     </legend>
 
-                    <Map center={[-27.2092052, -49.6401092]} zoom={15}>
+                    <Map center={initialPosition} zoom={15} onClick={hundleMapClick}>
                         <TileLayer
                             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
 
-                        <Marker position={[-27.2092052, -49.6401092]} zoom={15} />
+                        <Marker position={selectedPosition} zoom={15}  />
                     </Map>
 
                     <div className="field-group">
@@ -139,7 +155,7 @@ const CreatePoint = () => {
                                 {
                                     uf.map(ufs => {
                                         return (
-                                            <option value={ufs}>{ufs}</option>
+                                            <option  value={ufs}>{ufs}</option>
                                         )
                                     })
                                 }
