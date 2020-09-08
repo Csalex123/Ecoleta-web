@@ -23,6 +23,6 @@ Plataforma ecológica desenvolvida para cadastrar pontos de coletas
 </p>
 
 <p align="center">
-     <img alt="Home" src="https://i.ibb.co/wK0m8LY/3.png" width="50%">
+     <img alt="Home" src="https://i.ibb.co/wK0m8LY/3.png" width="100%">
 </p>
 
